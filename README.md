@@ -2,6 +2,14 @@
 
 GYMLOG は、Android 端末でローカル動作する筋トレ記録アプリです。Capacitor を利用したネイティブ Android アプリとして構成されており、ブラウザや PWA、外部サーバーへの接続を前提とせず、オフラインで使用できます。
 
+## Android版をダウンロード
+
+**[GYMLOG 最新版 APK をダウンロード](https://github.com/WassanBorn72/training-log/releases/latest/download/GYMLOG-v1.0.0.apk)**
+
+Android 端末では上のリンクから APK をダウンロードしてインストールできます。初回は Android 側で「この提供元のアプリを許可」などの確認が表示される場合があります。
+
+リリースの詳細や Google Play 配布用 AAB は [Releases](https://github.com/WassanBorn72/training-log/releases/latest) から確認できます。
+
 ## リリース
 
 現在のリリース版は **GYMLOG v1.0.0** です。
@@ -9,7 +17,6 @@ GYMLOG は、Android 端末でローカル動作する筋トレ記録アプリ�
 - App ID: `com.wassanborn72.gymlog`
 - App name: `GYMLOG`
 - Version: `1.0.0`
-- Android 向け署名付き release APK / AAB
 - APK: `GYMLOG-v1.0.0.apk`
 - AAB: `GYMLOG-v1.0.0.aab`
 
@@ -57,7 +64,7 @@ Android プロジェクト自体はリポジトリに固定保存せず、GitHub
 
 ## リリースビルド
 
-GitHub Actions の **Build Android Release** を手動実行すると、署名済みの APK と AAB を生成します。
+GitHub Actions の **Build Android Release** を手動実行すると、署名済み APK / AAB をビルドし、Actions artifact と GitHub Release の両方へ公開します。
 
 ビルドには次の Repository Secrets が必要です。
 
@@ -67,10 +74,6 @@ GitHub Actions の **Build Android Release** を手動実行すると、署名�
 - `GYMLOG_KEY_PASSWORD`
 
 署名用キーストアやパスワードそのものはリポジトリには保存しません。同じ App ID の GYMLOG を今後アップデートするため、署名鍵は継続して安全に保管する必要があります。
-
-### v1.0.0 のビルド
-
-`Build Android Release #17` で、署名付き `GYMLOG-v1.0.0.apk` と `GYMLOG-v1.0.0.aab` の生成を確認済みです。
 
 ## 開発
 
