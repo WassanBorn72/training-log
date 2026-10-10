@@ -124,8 +124,5 @@ jobs:
           if gh release view v1.0.0 >/dev/null 2>&1; then
             gh release upload v1.0.0 GYMLOG-v1.0.0.apk GYMLOG-v1.0.0.aab --clobber
           else
-            gh release create v1.0.0               GYMLOG-v1.0.0.apk               GYMLOG-v1.0.0.aab               --target "$GITHUB_SHA"               --title "GYMLOG v1.0.0"               --notes "GYMLOG v1.0.0 の正式リリースです。
-
-Android 端末へ直接インストールする場合は GYMLOG-v1.0.0.apk をダウンロードしてください。
-GYMLOG-v1.0.0.aab は Google Play 配布用です。"
+            gh release create v1.0.0 GYMLOG-v1.0.0.apk GYMLOG-v1.0.0.aab --target "$GITHUB_SHA" --title "GYMLOG v1.0.0" --notes "GYMLOG v1.0.0 の正式リリースです。Android 端末へ直接インストールする場合は GYMLOG-v1.0.0.apk をダウンロードしてください。GYMLOG-v1.0.0.aab は Google Play 配布用です。"
           fi
