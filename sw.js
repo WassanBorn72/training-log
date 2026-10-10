@@ -1,5 +1,11 @@
-const CACHE = "ironlog-cache-v4";
-const ASSETS = ["/training-log/", "/training-log/index.html", "/training-log/manifest.webmanifest"];
+const CACHE = "ironlog-cache-v5";
+const ASSETS = [
+  "/training-log/",
+  "/training-log/index.html",
+  "/training-log/manifest.webmanifest",
+  "/training-log/icon-192.png",
+  "/training-log/icon-512.png"
+];
 
 self.addEventListener("install", event => {
   event.waitUntil(
