@@ -1,0 +1,19 @@
+{
+  "name": "ironlog-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "IRONLOG native Android app powered by Capacitor",
+  "scripts": {
+    "android:add": "npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3"
+  }
+}
