@@ -82,9 +82,18 @@ jobs:
           text = re.sub(r'versionCode\s+\d+', 'versionCode 1', text, count=1)
           text = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0.0"', text, count=1)
 
-          marker = "release {"
-          if "signingConfig signingConfigs.release" not in text and marker in text:
-              text = text.replace(marker, marker + "\n            signingConfig signingConfigs.release", 1)
+          # Add the signing config only to buildTypes.release, not to
+          # signingConfigs.release itself.
+          build_types = text.find("buildTypes {")
+          if build_types == -1:
+              raise SystemExit("buildTypes block not found")
+
+          release_pos = text.find("release {", build_types)
+          if release_pos == -1:
+              raise SystemExit("buildTypes.release block not found")
+
+          insert_pos = release_pos + len("release {")
+          text = text[:insert_pos] + "\n            signingConfig signingConfigs.release" + text[insert_pos:]
 
           path.write_text(text)
           PY
