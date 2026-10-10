@@ -49,9 +49,12 @@ jobs:
         working-directory: android
         run: ./gradlew assembleDebug
 
+      - name: Prepare APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk GYMLOG.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GYMLOG-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: GYMLOG-apk
+          path: GYMLOG.apk
           if-no-files-found: error
