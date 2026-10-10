@@ -1,10 +1,11 @@
-const CACHE = "ironlog-cache-v5";
+const CACHE = "ironlog-cache-v6";
+const BASE = new URL("./", self.location.href);
 const ASSETS = [
-  "/training-log/",
-  "/training-log/index.html",
-  "/training-log/manifest.webmanifest",
-  "/training-log/icon-192.png",
-  "/training-log/icon-512.png"
+  new URL("./", BASE).href,
+  new URL("./index.html", BASE).href,
+  new URL("./manifest.webmanifest", BASE).href,
+  new URL("./icon-192.png", BASE).href,
+  new URL("./icon-512.png", BASE).href
 ];
 
 self.addEventListener("install", event => {
@@ -25,11 +26,16 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
+
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isManifest = url.pathname === "/training-log/manifest.webmanifest";
-  const isAppShell = url.pathname === "/training-log/" || url.pathname === "/training-log/index.html";
+  const manifestUrl = new URL("./manifest.webmanifest", BASE);
+  const rootUrl = new URL("./", BASE);
+  const indexUrl = new URL("./index.html", BASE);
+
+  const isManifest = url.pathname === manifestUrl.pathname;
+  const isAppShell = url.pathname === rootUrl.pathname || url.pathname === indexUrl.pathname;
   const isNavigation = event.request.mode === "navigate";
 
   if (isManifest || isAppShell || isNavigation) {
@@ -41,7 +47,7 @@ self.addEventListener("fetch", event => {
         return response;
       }).catch(async () => {
         const hit = await caches.match(event.request);
-        return hit || caches.match("/training-log/index.html");
+        return hit || caches.match(indexUrl.href);
       })
     );
     return;
