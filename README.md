@@ -35,9 +35,9 @@ GitHub Pages、Service Worker、Web App Manifest などの PWA 用構成は使�
 
 1. GitHub の **Actions** を開く
 2. **Build Android APK** の最新の成功した実行を開く
-3. **Artifacts / 成果物** から `GYMLOG-debug-apk` を取得
+3. **Artifacts / 成果物** から `GYMLOG-apk` を取得
 4. ZIP を展開
-5. `app-debug.apk` を Android 端末にインストール
+5. `GYMLOG.apk` を Android 端末にインストール
 
 現在の配布物は GitHub Actions で生成する debug APK です。端末への直接インストールで利用できます。Google Play 等で一般配布する場合は、署名付き release APK / AAB の設定が別途必要です。
 
