@@ -21,7 +21,7 @@ GYMLOG は、Android 端末内で動作する筋トレ記録アプリです。Ca
 
 アプリ本体は `www/index.html` にあり、Capacitor の Android WebView 内でローカル実行されます。
 
-- App ID: `com.wassanborn72.ironlog`
+- App ID: `com.wassanborn72.gymlog`
 - App name: `GYMLOG`
 - Web directory: `www`
 - Android プロジェクトはビルド時に生成
