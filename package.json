@@ -2,7 +2,7 @@
   "name": "ironlog-android",
   "version": "1.0.0",
   "private": true,
-  "description": "IRONLOG native Android app powered by Capacitor",
+  "description": "IRONLOG native Android workout logger",
   "scripts": {
     "android:add": "npx cap add android",
     "android:sync": "npx cap sync android",
