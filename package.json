@@ -1,8 +1,8 @@
 {
-  "name": "ironlog-android",
+  "name": "gymlog-android",
   "version": "1.0.0",
   "private": true,
-  "description": "IRONLOG native Android workout logger",
+  "description": "GYMLOG native Android workout logger",
   "scripts": {
     "android:add": "npx cap add android",
     "android:sync": "npx cap sync android",
