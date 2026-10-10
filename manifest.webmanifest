@@ -1,9 +1,10 @@
 {
+  "id": "/training-log/",
   "name": "IRONLOG 筋トレ記録",
   "short_name": "IRONLOG",
   "description": "端末内保存のオフライン対応トレーニングログ",
-  "start_url": "./",
-  "scope": "./",
+  "start_url": "/training-log/",
+  "scope": "/training-log/",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#0d1117",
