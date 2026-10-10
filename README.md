@@ -29,17 +29,20 @@ GYMLOG は、Android 端末内で動作する筋トレ記録アプリです。Ca
 
 GitHub Pages、Service Worker、Web App Manifest などの PWA 用構成は使用しません。
 
-## APK の作成
+## リリースビルド
 
-`main` ブランチに対象ファイルを push すると、GitHub Actions の **Build Android APK** が実行されます。
+GitHub Actions の **Build Android Release** を手動実行すると、署名付きの正式リリースビルドを生成します。
 
-1. GitHub の **Actions** を開く
-2. **Build Android APK** の最新の成功した実行を開く
-3. **Artifacts / 成果物** から `GYMLOG-apk` を取得
-4. ZIP を展開
-5. `GYMLOG.apk` を Android 端末にインストール
+必要な Repository Secrets:
 
-現在の配布物は GitHub Actions で生成する debug APK です。端末への直接インストールで利用できます。Google Play 等で一般配布する場合は、署名付き release APK / AAB の設定が別途必要です。
+- `GYMLOG_KEYSTORE_BASE64`
+- `GYMLOG_KEYSTORE_PASSWORD`
+- `GYMLOG_KEY_ALIAS`
+- `GYMLOG_KEY_PASSWORD`
+
+ビルド成果物 `GYMLOG-v1.0.0` には、端末へ直接インストールできる `GYMLOG-v1.0.0.apk` と、Google Play 配布用の `GYMLOG-v1.0.0.aab` が含まれます。
+
+署名鍵は今後のアップデートでも同じものを使う必要があります。キーストアとパスワードは安全な場所に保管してください。
 
 ## 開発
 
