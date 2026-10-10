@@ -1,23 +1,19 @@
-name: Build Android APK
+name: Build Android Release
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "www/**"
-      - "assets/**"
-      - "package.json"
-      - "package-lock.json"
-      - "capacitor.config.json"
-      - ".github/workflows/android-apk.yml"
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    env:
+      GYMLOG_KEYSTORE_PASSWORD: ${{ secrets.GYMLOG_KEYSTORE_PASSWORD }}
+      GYMLOG_KEY_ALIAS: ${{ secrets.GYMLOG_KEY_ALIAS }}
+      GYMLOG_KEY_PASSWORD: ${{ secrets.GYMLOG_KEY_PASSWORD }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +29,14 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      - name: Verify signing secrets
+        shell: bash
+        run: |
+          test -n "${{ secrets.GYMLOG_KEYSTORE_BASE64 }}" || (echo "Missing GYMLOG_KEYSTORE_BASE64" && exit 1)
+          test -n "$GYMLOG_KEYSTORE_PASSWORD" || (echo "Missing GYMLOG_KEYSTORE_PASSWORD" && exit 1)
+          test -n "$GYMLOG_KEY_ALIAS" || (echo "Missing GYMLOG_KEY_ALIAS" && exit 1)
+          test -n "$GYMLOG_KEY_PASSWORD" || (echo "Missing GYMLOG_KEY_PASSWORD" && exit 1)
+
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
@@ -45,16 +49,62 @@ jobs:
       - name: Sync web app
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Restore release keystore
+        shell: bash
+        run: |
+          echo "${{ secrets.GYMLOG_KEYSTORE_BASE64 }}" | base64 --decode > android/gymlog-release.jks
+          chmod 600 android/gymlog-release.jks
+
+      - name: Configure release signing and version
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path("android/app/build.gradle")
+          text = path.read_text()
+
+          signing = '''
+              signingConfigs {
+                  release {
+                      storeFile file("../gymlog-release.jks")
+                      storePassword System.getenv("GYMLOG_KEYSTORE_PASSWORD")
+                      keyAlias System.getenv("GYMLOG_KEY_ALIAS")
+                      keyPassword System.getenv("GYMLOG_KEY_PASSWORD")
+                  }
+              }
+          '''
+
+          if "signingConfigs {" not in text:
+              text = text.replace("android {", "android {" + signing, 1)
+
+          text = re.sub(r'versionCode\s+\d+', 'versionCode 1', text, count=1)
+          text = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0.0"', text, count=1)
+
+          marker = "release {"
+          if "signingConfig signingConfigs.release" not in text and marker in text:
+              text = text.replace(marker, marker + "\n            signingConfig signingConfigs.release", 1)
+
+          path.write_text(text)
+          PY
+
+      - name: Build signed release APK and AAB
         working-directory: android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleRelease bundleRelease
 
-      - name: Prepare APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk GYMLOG.apk
+      - name: Prepare release files
+        shell: bash
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk GYMLOG-v1.0.0.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab GYMLOG-v1.0.0.aab
+          keytool -printcert -jarfile GYMLOG-v1.0.0.apk | grep -E "SHA1:|SHA256:" || true
 
-      - name: Upload APK
+      - name: Upload release
         uses: actions/upload-artifact@v4
         with:
-          name: GYMLOG-apk
-          path: GYMLOG.apk
+          name: GYMLOG-v1.0.0
+          path: |
+            GYMLOG-v1.0.0.apk
+            GYMLOG-v1.0.0.aab
           if-no-files-found: error
