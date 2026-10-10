@@ -1,0 +1,9 @@
+{
+  "appId": "com.wassanborn72.ironlog",
+  "appName": "IRONLOG",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": false
+  }
+}
