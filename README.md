@@ -1,89 +1,45 @@
 # GYMLOG
 
-GYMLOG は、Android 端末でローカル動作する筋トレ記録アプリです。Capacitor を利用したネイティブ Android アプリとして構成されており、ブラウザや PWA、外部サーバーへの接続を前提とせず、オフラインで使用できます。
+GYMLOG は、Android 向けのシンプルな筋トレ記録アプリです。
 
-## Android版をダウンロード
+トレーニング中に重量・回数を手早く記録でき、履歴や前回の内容を確認しながら次のセットを組み立てられます。記録は端末内に保存され、オフラインでも利用できます。
+
+## ダウンロード
+
+### Android
 
 **[GYMLOG 最新版 APK をダウンロード](https://github.com/WassanBorn72/training-log/releases/latest/download/GYMLOG-v1.0.0.apk)**
 
-Android 端末では上のリンクから APK をダウンロードしてインストールできます。初回は Android 側で「この提供元のアプリを許可」などの確認が表示される場合があります。
+ダウンロードした APK を開いてインストールしてください。
 
-リリースの詳細や Google Play 配布用 AAB は [Releases](https://github.com/WassanBorn72/training-log/releases/latest) から確認できます。
+Google Play では配布していないため、初回インストール時に Android から「この提供元のアプリを許可」などの確認が表示される場合があります。
 
-## リリース
+現在のバージョン: **v1.0.0**
 
-現在のリリース版は **GYMLOG v1.0.0** です。
-
-- App ID: `com.wassanborn72.gymlog`
-- App name: `GYMLOG`
-- Version: `1.0.0`
-- APK: `GYMLOG-v1.0.0.apk`
-- AAB: `GYMLOG-v1.0.0.aab`
-
-APK は Android 端末への直接インストール用、AAB は Google Play での配布に利用できる形式です。
+[リリース情報を見る](https://github.com/WassanBorn72/training-log/releases/latest)
 
 ## 主な機能
 
-- セットごとの重量・回数の記録
+- 重量・回数をセットごとに記録
 - kg / lbs の切り替え
 - セットの追加・削除
-- 前回の重量・回数、前回メニューのコピー
-- レストタイマー（30 / 60 / 90 / 120 秒、自由入力）
-- 日付別のトレーニング記録
-- 履歴検索・詳細表示
-- 部位別の種目ライブラリ（追加・編集）
+- 前回の重量・回数を確認・コピー
+- 前回のトレーニングメニューをコピー
+- レストタイマー
+- 日付別のトレーニング履歴
+- 履歴の検索・詳細表示
+- 部位別の種目ライブラリ
+- オリジナル種目の追加・編集
 - トレーニングメニューの保存・呼び出し
-- JSON バックアップ・復元
-- 端末内保存
+- JSON形式でのバックアップ・復元
 - オフライン動作
 
-## アプリ構成
+## データについて
 
-アプリ本体は `www/index.html` にあり、Capacitor の Android WebView 内でローカル実行されます。
+トレーニング記録は端末内に保存されます。GYMLOG がトレーニング記録を外部サーバーへ送信することはありません。
 
-```text
-training-log/
-├─ www/
-│  └─ index.html
-├─ assets/
-│  └─ icon.svg
-├─ capacitor.config.json
-├─ package.json
-└─ .github/
-   └─ workflows/
-      └─ android-apk.yml
-```
+アプリのデータを消去した場合や、アプリをアンインストールした場合には記録が失われる可能性があります。機種変更や再インストールに備えて、アプリ内のバックアップ機能から定期的に JSON ファイルを保存することをおすすめします。
 
-Android プロジェクト自体はリポジトリに固定保存せず、GitHub Actions のビルド時に生成します。GitHub Pages、Service Worker、Web App Manifest などの PWA 用構成は使用していません。
+## 開発について
 
-## データ保存とバックアップ
-
-トレーニング記録は Android アプリ内のローカルストレージに保存され、サーバーには送信されません。
-
-アプリのデータ消去、アンインストール、端末変更などで記録が失われる可能性があるため、必要なデータはアプリ内の JSON バックアップ機能で保存してください。バックアップした JSON はアプリから復元できます。
-
-## リリースビルド
-
-GitHub Actions の **Build Android Release** を手動実行すると、署名済み APK / AAB をビルドし、Actions artifact と GitHub Release の両方へ公開します。
-
-ビルドには次の Repository Secrets が必要です。
-
-- `GYMLOG_KEYSTORE_BASE64`
-- `GYMLOG_KEYSTORE_PASSWORD`
-- `GYMLOG_KEY_ALIAS`
-- `GYMLOG_KEY_PASSWORD`
-
-署名用キーストアやパスワードそのものはリポジトリには保存しません。同じ App ID の GYMLOG を今後アップデートするため、署名鍵は継続して安全に保管する必要があります。
-
-## 開発
-
-Node.js が利用できる環境では、以下のコマンドで Android プロジェクトを生成・同期できます。
-
-```bash
-npm install
-npx cap add android
-npx cap sync android
-npx cap open android
-```
-
-アプリ本体の変更は基本的に `www/` 以下で行います。
+ソースコード、ビルド方法、リリース手順など、開発者向けの情報は **[DEVELOPMENT.md](DEVELOPMENT.md)** にまとめています。
