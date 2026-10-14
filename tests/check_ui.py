@@ -50,7 +50,7 @@ with sync_playwright() as p:
     page.wait_for_timeout(100)
     save=page.locator('#save').bounding_box();dock=page.locator('.timer-dock').bounding_box()
     assert save['y']+save['height']<=dock['y']
-    page.screenshot(path='/workspace/training-log/preview.png',full_page=True)
+    page.screenshot(path='/tmp/gymlog-preview.png',full_page=True)
     assert not errors,errors
     # Older backups without drafts remain usable.
     page.locator('[data-tab="settings"]').click()

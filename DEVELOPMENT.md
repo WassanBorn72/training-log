@@ -8,7 +8,7 @@ GYMLOG は Capacitor を利用した Android アプリです。アプリ本体�
 
 - App ID: `com.wassanborn72.gymlog`
 - App name: `GYMLOG`
-- Current version: `1.0.0`
+- Current version: `1.1.0`
 - Web directory: `www`
 - Capacitor: 8.x
 - Android プロジェクトはビルド時に生成
@@ -70,8 +70,8 @@ GitHub Actions の **Build Android Release** を手動実行すると、署名�
 
 現在の出力ファイル:
 
-- `GYMLOG-v1.0.0.apk`: Android 端末への直接インストール用
-- `GYMLOG-v1.0.0.aab`: Google Play 配布用
+- `GYMLOG-v1.1.0.apk`: Android 端末への直接インストール用
+- `GYMLOG-v1.1.0.aab`: Google Play 配布用
 
 ビルド完了後、Actions artifact に保存するとともに GitHub Release に公開します。
 
@@ -116,3 +116,7 @@ GYMLOG_KEY_PASSWORD
 
 現在はこれらの一部をワークフロー内で指定しています。
 
+
+## v1.1.0 のリリース確認
+
+versionCode は 2、versionName は 1.1.0 です。package.json、README、生成ファイル名、Release タグ／タイトルを揃えています。README は利用者向けに限定し、技術構成・署名・検証はこの文書で管理します。main 反映後に `gh workflow run android-apk.yml --ref main` を実行します。公開前に APK の App ID・バージョン・署名、AAB の署名、両方に含まれる HTML を検証し、v1.0.0 と署名証明書を比較します。公開後はタグのコミット、添付ファイル、README のリンクを確認します。実機での更新・キーボード・システムナビゲーションの確認は別途必要です。
