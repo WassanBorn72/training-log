@@ -79,8 +79,8 @@ jobs:
           if "signingConfigs {" not in text:
               text = text.replace("android {", "android {" + signing, 1)
 
-          text = re.sub(r'versionCode\s+\d+', 'versionCode 1', text, count=1)
-          text = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.0.0"', text, count=1)
+          text = re.sub(r'versionCode\s+\d+', 'versionCode 2', text, count=1)
+          text = re.sub(r'versionName\s+"[^"]+"', 'versionName "1.1.0"', text, count=1)
 
           build_types = text.find("buildTypes {")
           if build_types == -1:
@@ -103,17 +103,46 @@ jobs:
       - name: Prepare release files
         shell: bash
         run: |
-          cp android/app/build/outputs/apk/release/app-release.apk GYMLOG-v1.0.0.apk
-          cp android/app/build/outputs/bundle/release/app-release.aab GYMLOG-v1.0.0.aab
-          keytool -printcert -jarfile GYMLOG-v1.0.0.apk | grep -E "SHA1:|SHA256:" || true
+          cp android/app/build/outputs/apk/release/app-release.apk GYMLOG-v1.1.0.apk
+          cp android/app/build/outputs/bundle/release/app-release.aab GYMLOG-v1.1.0.aab
+          keytool -printcert -jarfile GYMLOG-v1.1.0.apk | grep -E "SHA1:|SHA256:" || true
+
+      - name: Verify release identity, version and signatures
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)
+          "$tools/apksigner" verify --verbose --print-certs GYMLOG-v1.1.0.apk
+          "$tools/aapt" dump badging GYMLOG-v1.1.0.apk > /tmp/gymlog-badging.txt
+          head -n 1 /tmp/gymlog-badging.txt
+          grep -q "name='com.wassanborn72.gymlog' versionCode='2' versionName='1.1.0'" /tmp/gymlog-badging.txt
+          jarsigner -verify GYMLOG-v1.1.0.aab
+          mkdir -p /tmp/gymlog-previous
+          gh release download v1.0.0 --pattern GYMLOG-v1.0.0.apk --dir /tmp/gymlog-previous
+          "$tools/apksigner" verify --print-certs /tmp/gymlog-previous/GYMLOG-v1.0.0.apk | grep 'certificate SHA-256 digest:' > /tmp/gymlog-old-cert.txt
+          "$tools/apksigner" verify --print-certs GYMLOG-v1.1.0.apk | grep 'certificate SHA-256 digest:' > /tmp/gymlog-new-cert.txt
+          diff /tmp/gymlog-old-cert.txt /tmp/gymlog-new-cert.txt
+          python - <<'PYVERIFY'
+          import json
+          from pathlib import Path
+          from zipfile import ZipFile
+          assert json.loads(Path('package.json').read_text())['version'] == '1.1.0'
+          config = json.loads(Path('capacitor.config.json').read_text())
+          assert config['appId'] == 'com.wassanborn72.gymlog' and config['appName'] == 'GYMLOG'
+          expected = Path('www/index.html').read_bytes()
+          with ZipFile('GYMLOG-v1.1.0.apk') as apk, ZipFile('GYMLOG-v1.1.0.aab') as aab:
+              assert apk.read('assets/public/index.html') == expected
+              assert aab.read('base/assets/public/index.html') == expected
+          PYVERIFY
 
       - name: Upload Actions artifact
         uses: actions/upload-artifact@v4
         with:
-          name: GYMLOG-v1.0.0
+          name: GYMLOG-v1.1.0
           path: |
-            GYMLOG-v1.0.0.apk
-            GYMLOG-v1.0.0.aab
+            GYMLOG-v1.1.0.apk
+            GYMLOG-v1.1.0.aab
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -121,8 +150,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          if gh release view v1.0.0 >/dev/null 2>&1; then
-            gh release upload v1.0.0 GYMLOG-v1.0.0.apk GYMLOG-v1.0.0.aab --clobber
+          if gh release view v1.1.0 >/dev/null 2>&1; then
+            gh release upload v1.1.0 GYMLOG-v1.1.0.apk GYMLOG-v1.1.0.aab --clobber
           else
-            gh release create v1.0.0 GYMLOG-v1.0.0.apk GYMLOG-v1.0.0.aab --target "$GITHUB_SHA" --title "GYMLOG v1.0.0" --notes "GYMLOG v1.0.0 の正式リリースです。Android 端末へ直接インストールする場合は GYMLOG-v1.0.0.apk をダウンロードしてください。GYMLOG-v1.0.0.aab は Google Play 配布用です。"
+            gh release create v1.1.0 GYMLOG-v1.1.0.apk GYMLOG-v1.1.0.aab --target "$GITHUB_SHA" --title "GYMLOG v1.1.0" --notes "種目共通メモの編集、種目別履歴、全画面で操作できるレストタイマーを追加しました。既存アプリをアンインストールせずに APK で更新してください。Android 端末へ直接インストールする場合は GYMLOG-v1.1.0.apk をダウンロードしてください。GYMLOG-v1.1.0.aab は Google Play 配布用です。"
           fi
