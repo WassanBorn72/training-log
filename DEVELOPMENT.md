@@ -8,7 +8,7 @@ GYMLOG は Capacitor を利用した Android アプリです。アプリ本体�
 
 - App ID: `com.wassanborn72.gymlog`
 - App name: `GYMLOG`
-- Current version: `1.1.0`
+- Current version: `1.2.0`
 - Web directory: `www`
 - Capacitor: 8.x
 - Android プロジェクトはビルド時に生成
@@ -70,8 +70,8 @@ GitHub Actions の **Build Android Release** を手動実行すると、署名�
 
 現在の出力ファイル:
 
-- `GYMLOG-v1.1.0.apk`: Android 端末への直接インストール用
-- `GYMLOG-v1.1.0.aab`: Google Play 配布用
+- `GYMLOG-v1.2.0.apk`: Android 端末への直接インストール用
+- `GYMLOG-v1.2.0.aab`: Google Play 配布用
 
 ビルド完了後、Actions artifact に保存するとともに GitHub Release に公開します。
 
@@ -120,3 +120,17 @@ GYMLOG_KEY_PASSWORD
 ## v1.1.0 のリリース確認
 
 versionCode は 2、versionName は 1.1.0 です。package.json、README、生成ファイル名、Release タグ／タイトルを揃えています。README は利用者向けに限定し、技術構成・署名・検証はこの文書で管理します。main 反映後に `gh workflow run android-apk.yml --ref main` を実行します。公開前に APK の App ID・バージョン・署名、AAB の署名、両方に含まれる HTML を検証し、v1.0.0 と署名証明書を比較します。公開後はタグのコミット、添付ファイル、README のリンクを確認します。実機での更新・キーボード・システムナビゲーションの確認は別途必要です。
+
+## メニュー構造と前回コピー（v1.2.0）
+
+- 新規メニューの `templates[].exercises` は `exerciseId`・`name`・`part` のみを保存し、セット数・重量・単位・回数・一時的なエントリIDを含めません。呼び出し時は新しいIDと空の3セット（kg）を生成します。旧メニューの `sets` は呼び出し時に無視し、旧履歴や旧メニューを破壊的に書き換えません。
+- 既存の `drafts[date]` の配列形式を維持し、追加フィールド `draftTemplates[date]` に使用中のメニュー `{id,name}` または `null` を保存します。日付切り替え・再起動・JSONバックアップでメニューの文脈を維持します。
+- メニュー使用時の履歴に `templateId` と `templateName` を追加します。「前回の重量・回数」は、対象日より前で同じ `templateId` の直近の履歴を選び、その中の種目をコピーします。直近のメニュー記録に種目がなければ、さらに古い記録や別メニューへフォールバックしません。
+- 種目は `exerciseId` で照合し、IDがない旧記録のみ名称で照合します。メニュー名が同じでもIDが違うメニューは別として扱います。旧履歴にメニュー関連付けを推測で追加しません。
+- メニュー未使用時は種目ごとの前回記録を使います。重複していた `data-copy-ex` ボタンは削除し、`data-copy-prev` に一本化しました。「前回メニュー」による記録全体のコピーでは、コピー元にメニュー情報がある場合は引き継ぎます。
+- 文字の基本サイズを14pxに調整し、操作ボタンは最小高さ44pxを維持します。セット入力は重量・単位・回数を独立したグリッド列にし、単位欄に64pxを確保しました。ボタンのラベルは分割せず、ボタンのまとまりを必要に応じて折り返します。safe area・固定タイマー・下部ナビゲーションの余白を維持します。
+- 数値／単位の入力変更では保存のみ行います。フォーカスを外す際の再描画で入力イベントが再入するのを避け、セット追加・コピー等の構造変更時に描画します。
+
+検証: `python tests/check_ui.py` と `python tests/check_templates.py`。後者はメニューごとのコピー、同名メニュー、旧メニュー、旧履歴、下書きの日付切り替え、JSON書き出し・復元、320／360／412px の単位欄とボタン、保存ボタンと固定タイマーの配置を確認します。
+
+v1.2.0 のリリースは `versionCode 3`、`versionName 1.2.0`。ワークフロー内の出力名・Releaseタグ・タイトルとREADMEを同じバージョンに揃え、v1.1.0との署名証明書の一致も公開前に検証します。
